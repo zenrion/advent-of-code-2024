@@ -54,6 +54,22 @@ class DayFiveRunner extends AdventOfCodeRunner {
     return updateArray.toSorted((a, b) => this.compareOrder(a, b, this.orders));
   }
 
+  /* Example:
+  
+  75,97,47,61,53 becomes 97,75,47,61,53
+  
+  a = 75, b = 97
+
+  firstOrder = 75|97
+  secondOrder = 97|75
+
+  75|97 does not exist in the orders, so we know that a will not come before b.
+  97|75 does exist in the orders, so we know b will come before a.
+
+  return -1 = a comes before b.
+  return 0  = same, no sorting performed.
+  return 1  = b comes before a.
+  */
   compareOrder(a, b, orders) {
     const firstOrder = `${a}|${b}`;
     const secondOrder = `${b}|${a}`;
