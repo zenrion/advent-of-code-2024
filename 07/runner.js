@@ -68,9 +68,9 @@ class DaySevenRunner extends AdventOfCodeRunner {
 
       for (const operation of operators) {
         const nextNumber = numbers[index];
-        const numberAfterApplyingOperation = calculateNumber(currentNumber, nextNumber, operation);
+        const calculatedNumber = calculateNumber(currentNumber, nextNumber, operation);
 
-        backtrack(numberAfterApplyingOperation, index + 1);
+        backtrack(calculatedNumber, index + 1);
       }
     }
 
