@@ -1,8 +1,8 @@
 export const Directions = {
-  up: 0,
-  down: 1,
-  left: 2,
-  right: 3
+  up: 'up',
+  right: 'right',
+  down: 'down',
+  left: 'left'
 };
 
 export const changeDirection = (direction) => {

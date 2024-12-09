@@ -5,7 +5,12 @@ export class Guard {
   direction = Directions.up;
   position = new Position(0, 0);
 
-  constructor(row = 0, col = 0) {
+  constructor({ row = 0, col = 0, guard } = {}) {
+    if (guard) {
+      this.position = new Position(guard.position.row, guard.position.col);
+      return;
+    }
+
     this.position = new Position(row, col);
   }
 

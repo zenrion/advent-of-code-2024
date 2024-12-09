@@ -14,28 +14,24 @@ class DaySixRunner extends AdventOfCodeRunner {
   }
 
   partOne() {
-    const visited = new Set();
-
-    while (this.isInsideMap(this.guard.position)) {
-      visited.add(this.guard.position.toString());
-
-      const nextPosition = this.guard.getNextPosition();
-
-      if (this.obstacles.has(nextPosition.toString())) {
-        this.guard.changeDirection();
-      }
-      else {
-        this.guard.moveTo(nextPosition);
-      }
-    }
-
-    visited.add(this.guard.position.toString());
-
-    return visited.size;
+    return this.getPositions().size;
   }
 
   partTwo() {
+    let loops = 0;
+    const walkedTiles = this.getPositions();
 
+    for (const tile of walkedTiles) {
+      const [row, col] = tile.split(',').map(Number);
+
+      if (this.isGuardTile(row, col, this.guard.position)) continue;
+
+      if (this.canCauseLoop(row, col, this.createMap())) {
+        ++loops;
+      }
+    }
+
+    return loops;
   }
 
   initialize() {
@@ -48,7 +44,7 @@ class DaySixRunner extends AdventOfCodeRunner {
         const entity = this.data[row][col];
 
         if (entity === '^') {
-          this.guard = new Guard(row, col)
+          this.guard = new Guard({ row, col })
         }
         else if (entity === '#') {
           this.obstacles.add(new Position(row, col).toString());
@@ -58,14 +54,67 @@ class DaySixRunner extends AdventOfCodeRunner {
   }
 
   isInsideMap(position) {
-    if (position.row <= 0 || position.row >= this.rowMax - 1) return false;
-    if (position.col <= 0 || position.col >= this.colMax - 1) return false;
+    if (position.row < 0 || position.row >= this.rowMax) return false;
+    if (position.col < 0 || position.col >= this.colMax) return false;
 
     return true;
   }
 
-  getEntityAtPosition(position) {
-    return this.data[position.row][position.col];
+  getPositions() {
+    const guard = new Guard({ guard: this.guard });
+    const positions = new Set();
+
+    while (this.isInsideMap(guard.position)) {
+      const nextPosition = guard.getNextPosition();
+
+      positions.add(guard.position.toString());
+
+      if (!this.isInsideMap(nextPosition)) break;
+
+      if (this.obstacles.has(nextPosition.toString())) {
+        guard.changeDirection();
+      }
+      else {
+        guard.moveTo(nextPosition);
+      }
+    }
+
+    return positions;
+  }
+
+  isGuardTile(row, col, guardPosition) {
+    return row === guardPosition.row && col === guardPosition.col;
+  }
+
+  createMap() {
+    return this.data.map((row) => Array.from(row));
+  }
+
+  canCauseLoop(row, col, map) {
+    const guard = new Guard({ guard: this.guard });
+    const positions = new Set();
+
+    map[row][col] = '#';
+
+    while (this.isInsideMap(guard.position)) {
+      const currentPositionKey = `${guard.position.toString()},${guard.direction}`
+      const nextPosition = guard.getNextPosition();
+      const nextPositionKey = `${nextPosition.toString()},${guard.direction}`;
+
+      positions.add(currentPositionKey);
+
+      if (!this.isInsideMap(nextPosition)) break;
+      if (positions.has(nextPositionKey)) return true;
+
+      if (map[nextPosition.row][nextPosition.col] === '#') {
+        guard.changeDirection();
+      }
+      else {
+        guard.moveTo(nextPosition);
+      }
+    }
+
+    return false;
   }
 }
 
