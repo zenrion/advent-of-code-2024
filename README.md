@@ -5,7 +5,7 @@ Run the following command in the terminal:
 
 The {DAY} must be two digits long, so single digit days must be prepended with 0.
 
-## Example
+### Example
 `node createRunner 03`
 
 This will create a new folder "03" with the following files:
