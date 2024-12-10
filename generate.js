@@ -40,15 +40,13 @@ const placeToEnglishMap = new Map([
   [30, 'Thirty']
 ]);
 
-function getDayName(day) {
-  const parsedDay = Number(day.replace(/^0/, ''));
-
-  if (digitToEnglishMap.has(parsedDay)) {
-    return digitToEnglishMap.get(parsedDay);
+function getEnglishNameForDay(day) {
+  if (digitToEnglishMap.has(day)) {
+    return digitToEnglishMap.get(day);
   }
 
-  const place = Math.floor(parsedDay / 10);
-  const digit = parsedDay % 10;
+  const place = Math.floor(day / 10);
+  const digit = day % 10;
 
   return getJoinedDayName(place, digit);
 }
@@ -64,16 +62,21 @@ function getJoinedDayName(place, digit) {
 }
 
 const args = process.argv.slice(2);
-const folderName = args[0];
+const dayArg = args[1];
 
-if (folderName.length !== 2) {
-  console.log('Invalid day.');
+const day = dayArg ? Number(dayArg) : new Date().getDate();
+const validDayRegex = /^([1-9]|[1-2][0-9]|3[0-1])$/;
+
+if (!validDayRegex.test(day.toString())) {
+  console.log('Day must be between 1-31.');
   exit();
 }
+
+const folderName = day < 10 ? '0' + day : day.toString();
 
 if (!existsSync(folderName)) {
   mkdirSync(folderName);
 }
 
 writeFileSync(`./${folderName}/input.txt`, '');
-writeFileSync(`./${folderName}/runner.js`, classString.replaceAll('{DAY}', getDayName(folderName)));
+writeFileSync(`./${folderName}/runner.js`, classString.replaceAll('{DAY}', getEnglishNameForDay(day)));
