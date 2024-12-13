@@ -1,5 +1,4 @@
 import { AdventOfCodeRunner } from "../adventOfCodeRunner.js";
-import { Stone } from "./stone.js"
 
 class DayElevenRunner extends AdventOfCodeRunner {
   stones = [];
